@@ -116,9 +116,11 @@ export function init(state, onStart, onSubmit, onReset, onNext, onSubmitBands) {
     // Abort Button - return to start screen
     if (abortBtn) {
         abortBtn.addEventListener('click', () => {
-            if (confirm('トレーニングを中断してトップに戻りますか？')) {
-                onReset();
-            }
+            showModal(
+                'トレーニングを中断',
+                '本当にトップ画面に戻りますか？\n現在の進捗は失われます。',
+                onReset
+            );
         });
     }
 
@@ -339,3 +341,66 @@ export function setPreviewCallback(callback) {
 export function getSelectedBandsExport() {
     return getSelectedBands();
 }
+
+// ============================================
+// Modal Dialog System
+// ============================================
+const modalOverlay = document.getElementById('modal-overlay');
+const modalTitle = document.getElementById('modal-title');
+const modalMessage = document.getElementById('modal-message');
+const modalConfirmBtn = document.getElementById('modal-confirm');
+const modalCancelBtn = document.getElementById('modal-cancel');
+
+let modalConfirmCallback = null;
+
+function showModal(title, message, onConfirm) {
+    if (!modalOverlay) return;
+
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    modalConfirmCallback = onConfirm;
+    modalOverlay.classList.remove('hidden');
+
+    // Focus confirm button for accessibility
+    modalConfirmBtn.focus();
+}
+
+function hideModal() {
+    if (modalOverlay) {
+        modalOverlay.classList.add('hidden');
+    }
+    modalConfirmCallback = null;
+}
+
+// Modal button event listeners
+if (modalConfirmBtn) {
+    modalConfirmBtn.addEventListener('click', () => {
+        const callback = modalConfirmCallback; // Save callback before hiding
+        hideModal();
+        if (callback) {
+            callback();
+        }
+    });
+}
+
+if (modalCancelBtn) {
+    modalCancelBtn.addEventListener('click', () => {
+        hideModal();
+    });
+}
+
+// Close modal on overlay click
+if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            hideModal();
+        }
+    });
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay && !modalOverlay.classList.contains('hidden')) {
+        hideModal();
+    }
+});
