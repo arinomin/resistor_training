@@ -348,12 +348,12 @@ export function showFeedback(isCorrect, explanation) {
     if (submitBandsBtn) submitBandsBtn.classList.add('hidden');
     answerInput.disabled = true;
 
-    // Auto-scroll to feedback
+    // Auto-scroll to feedback with delay for DOM update
     requestAnimationFrame(() => {
         setTimeout(() => {
-            feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
             nextBtn.focus();
-        }, 50);
+        }, 100);
     });
 }
 
