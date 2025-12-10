@@ -12,6 +12,24 @@
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     --radius: 0.75rem;
+    --canvas-bg: #ffffff;
+}
+
+/* Dark Mode Theme */
+[data-theme="dark"] {
+    --primary-color: #818cf8;
+    --primary-hover: #6366f1;
+    --secondary-color: #94a3b8;
+    --background-color: #0f172a;
+    --card-background: #1e293b;
+    --text-color: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --success-color: #4ade80;
+    --error-color: #f87171;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+    --canvas-bg: #1e293b;
 }
 
 * {
@@ -28,6 +46,7 @@ body {
     display: flex;
     justify-content: center;
     min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 #app {
@@ -183,7 +202,60 @@ button {
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
     margin-bottom: 2rem;
+    gap: 1rem;
 }
+
+/* Abort Button */
+.abort-btn {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.abort-btn:hover {
+    background: var(--error-color);
+    border-color: var(--error-color);
+    color: white;
+}
+
+/* Input Error Message */
+.input-error {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Input Error State */
+#answer-input.error {
+    border-color: var(--error-color);
+    animation: shake 0.3s ease-in-out;
+}
+
 
 .problem-area {
     background: white;
@@ -458,4 +530,57 @@ button {
 .gold-band {
     background: linear-gradient(135deg, #FFD700, #DAA520);
     color: #333;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    border-color: var(--primary-color);
+}
+
+/* Dark mode adjustments for inputs/selects */
+[data-theme="dark"] input,
+[data-theme="dark"] select {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .setting-group {
+    background: #1a2234;
+}
+
+[data-theme="dark"] .problem-area {
+    background: var(--canvas-bg);
+}
+
+[data-theme="dark"] .color-table th {
+    background-color: #1a2234;
+}
+
+[data-theme="dark"] .formula-box {
+    background: #1a2234;
+}
+
+[data-theme="dark"] .formula {
+    background: var(--card-background);
 }

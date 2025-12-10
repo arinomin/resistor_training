@@ -1,4 +1,3 @@
-
 // Logic for generating resistor and circuit problems
 
 // Constants for Color Code

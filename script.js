@@ -1,6 +1,6 @@
 
 // Import modules
-import { ColorCodeProblem, CircuitProblem, ColorBuildProblem } from './js/logic.js';
+import { ColorCodeProblem, CircuitProblem, ColorBuildProblem, COLORS } from './js/logic.js';
 import * as UI from './js/ui.js';
 import * as Renderer from './js/renderer.js';
 
@@ -19,7 +19,9 @@ const canvas = document.getElementById('problem-canvas');
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
+    UI.initTheme(); // Initialize dark mode
     UI.init(state, startGame, submitAnswer, resetGame, nextQuestion, submitBands);
+    UI.setPreviewCallback(drawPreviewResistor); // Set up live preview
 });
 
 function startGame(mode, count) {
@@ -43,13 +45,8 @@ function generateAndShowProblem() {
         UI.showNumericInput();
     } else if (state.mode === 'build-resistor') {
         state.currentProblem = new ColorBuildProblem();
-        // Clear canvas or show placeholder
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#64748b';
-        ctx.font = '24px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('色帯を選んで抵抗を作ってください', canvas.width / 2, canvas.height / 2);
+        // Draw empty resistor as starting preview
+        drawPreviewResistor([]);
         UI.showColorPicker(state.currentProblem.getDisplayValue());
     } else {
         // Circuit modes
@@ -108,3 +105,89 @@ function resetGame() {
     UI.showScreen('start-screen');
 }
 
+// Draw resistor preview with selected colors (for build mode)
+function drawPreviewResistor(selectedBands) {
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const cx = width / 2;
+    const cy = height / 2;
+    const rw = 300; // Resistor body width
+    const rh = 100; // Resistor body height
+
+    // Draw Wire
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(width, cy);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+
+    // Draw Resistor Body
+    ctx.fillStyle = '#f5e6d3';
+    ctx.beginPath();
+    roundRect(ctx, cx - rw / 2, cy - rh / 2, rw, rh, 15);
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#d6cba0';
+    ctx.stroke();
+
+    // Draw Bands
+    const bandWidth = 20;
+    const startX = cx - rw / 2 + 40;
+    const gap = 50;
+
+    // Color mapping
+    const colorMap = {
+        'black': '#000000',
+        'brown': '#8B4513',
+        'red': '#FF0000',
+        'orange': '#FFA500',
+        'yellow': '#FFFF00',
+        'green': '#008000',
+        'blue': '#0000FF',
+        'violet': '#8A2BE2',
+        'gray': '#808080',
+        'white': '#FFFFFF',
+        'gold': '#FFD700'
+    };
+
+    // Draw each band (or placeholder if not selected)
+    for (let i = 0; i < 4; i++) {
+        let x = startX + gap * i;
+        if (i === 3) x += 40; // Gap for tolerance band
+
+        let color = '#e0e0e0'; // Default placeholder gray
+        if (i < 3 && selectedBands[i]) {
+            color = colorMap[selectedBands[i]] || '#e0e0e0';
+        } else if (i === 3) {
+            color = '#FFD700'; // Gold for tolerance
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x, cy - rh / 2, bandWidth, rh);
+
+        // Add border for visibility on light colors
+        if (['yellow', 'white', ''].includes(selectedBands[i]) || i === 3) {
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, cy - rh / 2, bandWidth, rh);
+        }
+    }
+}
+
+// Helper for rounded rectangle
+function roundRect(ctx, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}

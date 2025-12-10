@@ -35,6 +35,15 @@ const bandSelect0 = document.getElementById('band-select-0');
 const bandSelect1 = document.getElementById('band-select-1');
 const bandSelect2 = document.getElementById('band-select-2');
 
+// UX Fix: New elements
+const abortBtn = document.getElementById('abort-btn');
+const inputError = document.getElementById('input-error');
+const bandsError = document.getElementById('bands-error');
+
+// State tracking for dynamic button text
+let totalQuestionsCount = 10;
+let currentQuestionCount = 0;
+
 export function init(state, onStart, onSubmit, onReset, onNext, onSubmitBands) {
     // Mode Selection
     modeBtns.forEach(btn => {
@@ -59,31 +68,40 @@ export function init(state, onStart, onSubmit, onReset, onNext, onSubmitBands) {
         onStart(mode, count);
     });
 
-    // Submit Answer (Numeric)
+    // Submit Answer (Numeric) with error handling
     submitBtn.addEventListener('click', () => {
+        hideErrors();
         const val = parseFloat(answerInput.value);
-        if (isNaN(val)) return;
+        if (isNaN(val) || answerInput.value.trim() === '') {
+            showInputError();
+            return;
+        }
         onSubmit(val);
     });
 
     // Also submit on Enter
     answerInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
+            hideErrors();
             const val = parseFloat(answerInput.value);
-            if (!isNaN(val) && !submitBtn.classList.contains('hidden')) {
+            if (!isNaN(val) && answerInput.value.trim() !== '' && !submitBtn.classList.contains('hidden')) {
                 onSubmit(val);
-            } else if (e.key === 'Enter' && !nextBtn.classList.contains('hidden')) {
+            } else if (!feedbackArea.classList.contains('hidden')) {
+                // Allow Enter to proceed to next question when feedback is shown
                 onNext();
+            } else if (submitBtn && !submitBtn.classList.contains('hidden')) {
+                showInputError();
             }
         }
     });
 
-    // Submit Bands (Color Picker)
+    // Submit Bands (Color Picker) with inline error
     if (submitBandsBtn) {
         submitBandsBtn.addEventListener('click', () => {
+            hideErrors();
             const bands = getSelectedBands();
             if (bands.includes('')) {
-                alert('すべての色帯を選択してください');
+                showBandsError();
                 return;
             }
             onSubmitBands(bands);
@@ -94,6 +112,15 @@ export function init(state, onStart, onSubmit, onReset, onNext, onSubmitBands) {
     nextBtn.addEventListener('click', () => {
         onNext();
     });
+
+    // Abort Button - return to start screen
+    if (abortBtn) {
+        abortBtn.addEventListener('click', () => {
+            if (confirm('トレーニングを中断してトップに戻りますか？')) {
+                onReset();
+            }
+        });
+    }
 
     // Result Screen Buttons
     retryBtn.addEventListener('click', () => {
@@ -132,6 +159,45 @@ export function updateProgress(current, total, score) {
     currentQuestionEl.textContent = current + 1; // 0-indexed internally
     totalQuestionsEl.textContent = total;
     currentScoreEl.textContent = score;
+
+    // Track for dynamic button text
+    currentQuestionCount = current;
+    totalQuestionsCount = total;
+
+    // Update next button text for last question
+    updateNextButtonText();
+}
+
+// Update next button text based on question progress
+function updateNextButtonText() {
+    if (currentQuestionCount + 1 >= totalQuestionsCount) {
+        nextBtn.textContent = '結果を見る';
+    } else {
+        nextBtn.textContent = '次の問題へ';
+    }
+}
+
+// Error display helpers
+function showInputError() {
+    if (inputError) {
+        inputError.classList.remove('hidden');
+    }
+    if (answerInput) {
+        answerInput.classList.add('error');
+        setTimeout(() => answerInput.classList.remove('error'), 300);
+    }
+}
+
+function showBandsError() {
+    if (bandsError) {
+        bandsError.classList.remove('hidden');
+    }
+}
+
+function hideErrors() {
+    if (inputError) inputError.classList.add('hidden');
+    if (bandsError) bandsError.classList.add('hidden');
+    if (answerInput) answerInput.classList.remove('error');
 }
 
 // Show numeric input area, hide color picker
@@ -213,3 +279,63 @@ export function showResult(score, total) {
     finalTotalEl.textContent = total;
 }
 
+// ============================================
+// Theme Toggle (Dark Mode)
+// ============================================
+const themeToggle = document.getElementById('theme-toggle');
+
+export function initTheme() {
+    // Load saved theme from LocalStorage
+    const savedTheme = localStorage.getItem('resistor-trainer-theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    } else {
+        // Check system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            updateThemeIcon('dark');
+        }
+    }
+
+    // Theme toggle button click
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('resistor-trainer-theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+    }
+}
+
+function updateThemeIcon(theme) {
+    if (themeToggle) {
+        themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+}
+
+// ============================================
+// Real-time Resistor Preview (Build Mode)
+// ============================================
+let previewCallback = null;
+
+export function setPreviewCallback(callback) {
+    previewCallback = callback;
+
+    // Add change listeners to band selects
+    [bandSelect0, bandSelect1, bandSelect2].forEach(select => {
+        if (select) {
+            select.addEventListener('change', () => {
+                if (previewCallback) {
+                    previewCallback(getSelectedBands());
+                }
+            });
+        }
+    });
+}
+
+export function getSelectedBandsExport() {
+    return getSelectedBands();
+}
