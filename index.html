@@ -89,61 +89,44 @@
                 <button id="submit-btn" class="primary-btn">回答する</button>
             </div>
 
-            <!-- Color Picker for Build Resistor Mode -->
+            <!-- Color Picker for Build Resistor Mode (Drag & Drop) -->
             <div id="color-picker-area" class="hidden">
                 <p class="picker-instruction">この抵抗を作ってください:</p>
                 <div class="target-value" id="target-value-display">4700Ω</div>
 
-                <div class="band-slots">
-                    <div class="band-slot" data-band="0">
-                        <span class="band-label">第1帯</span>
-                        <select class="band-select" id="band-select-0">
-                            <option value="">選択</option>
-                            <option value="brown">茶 (1)</option>
-                            <option value="red">赤 (2)</option>
-                            <option value="orange">橙 (3)</option>
-                            <option value="yellow">黄 (4)</option>
-                            <option value="green">緑 (5)</option>
-                            <option value="blue">青 (6)</option>
-                            <option value="violet">紫 (7)</option>
-                            <option value="gray">灰 (8)</option>
-                            <option value="white">白 (9)</option>
-                        </select>
+                <!-- Drop Zones (Resistor Bands) -->
+                <div class="resistor-builder">
+                    <div class="band-drop-zone" data-band="0" data-color="">
+                        <span class="drop-label">1</span>
                     </div>
-                    <div class="band-slot" data-band="1">
-                        <span class="band-label">第2帯</span>
-                        <select class="band-select" id="band-select-1">
-                            <option value="">選択</option>
-                            <option value="black">黒 (0)</option>
-                            <option value="brown">茶 (1)</option>
-                            <option value="red">赤 (2)</option>
-                            <option value="orange">橙 (3)</option>
-                            <option value="yellow">黄 (4)</option>
-                            <option value="green">緑 (5)</option>
-                            <option value="blue">青 (6)</option>
-                            <option value="violet">紫 (7)</option>
-                            <option value="gray">灰 (8)</option>
-                            <option value="white">白 (9)</option>
-                        </select>
+                    <div class="band-drop-zone" data-band="1" data-color="">
+                        <span class="drop-label">2</span>
                     </div>
-                    <div class="band-slot" data-band="2">
-                        <span class="band-label">第3帯 (倍率)</span>
-                        <select class="band-select" id="band-select-2">
-                            <option value="">選択</option>
-                            <option value="black">黒 (×1)</option>
-                            <option value="brown">茶 (×10)</option>
-                            <option value="red">赤 (×100)</option>
-                            <option value="orange">橙 (×1k)</option>
-                            <option value="yellow">黄 (×10k)</option>
-                        </select>
+                    <div class="band-drop-zone" data-band="2" data-color="">
+                        <span class="drop-label">3</span>
                     </div>
-                    <div class="band-slot band-fixed">
-                        <span class="band-label">第4帯</span>
-                        <div class="fixed-band gold-band">金 (±5%)</div>
+                    <div class="band-drop-zone band-fixed-zone" data-band="3" data-color="gold">
+                        <span class="drop-label">金</span>
                     </div>
                 </div>
 
-                <div id="bands-error" class="input-error hidden">すべての色帯を選択してください</div>
+                <!-- Color Palette (Draggable) -->
+                <p class="palette-label">色を帯にドラッグしてください</p>
+                <div class="color-palette" id="color-palette">
+                    <div class="color-chip" draggable="true" data-color="black" style="background:#000"></div>
+                    <div class="color-chip" draggable="true" data-color="brown" style="background:#8B4513"></div>
+                    <div class="color-chip" draggable="true" data-color="red" style="background:#FF0000"></div>
+                    <div class="color-chip" draggable="true" data-color="orange" style="background:#FFA500"></div>
+                    <div class="color-chip" draggable="true" data-color="yellow" style="background:#FFFF00"></div>
+                    <div class="color-chip" draggable="true" data-color="green" style="background:#008000"></div>
+                    <div class="color-chip" draggable="true" data-color="blue" style="background:#0000FF"></div>
+                    <div class="color-chip" draggable="true" data-color="violet" style="background:#8A2BE2"></div>
+                    <div class="color-chip" draggable="true" data-color="gray" style="background:#808080"></div>
+                    <div class="color-chip" draggable="true" data-color="white"
+                        style="background:#FFFFFF; border: 1px solid #ccc;"></div>
+                </div>
+
+                <div id="bands-error" class="input-error hidden">すべての帯に色を設定してください</div>
                 <button id="submit-bands-btn" class="primary-btn">回答する</button>
             </div>
 

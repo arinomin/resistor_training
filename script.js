@@ -21,7 +21,7 @@ const canvas = document.getElementById('problem-canvas');
 document.addEventListener('DOMContentLoaded', () => {
     UI.initTheme(); // Initialize dark mode
     UI.init(state, startGame, submitAnswer, resetGame, nextQuestion, submitBands);
-    UI.setPreviewCallback(drawPreviewResistor); // Set up live preview
+    UI.initDragAndDrop(drawPreviewResistor); // Set up drag & drop with live preview
 });
 
 function startGame(mode, count) {

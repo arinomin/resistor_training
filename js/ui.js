@@ -26,14 +26,13 @@ const finalTotalEl = document.getElementById('final-total');
 const retryBtn = document.getElementById('retry-btn');
 const homeBtn = document.getElementById('home-btn');
 
-// Color Picker Elements
+// Color Picker Elements (Drag & Drop)
 const numericAnswerArea = document.getElementById('numeric-answer-area');
 const colorPickerArea = document.getElementById('color-picker-area');
 const targetValueDisplay = document.getElementById('target-value-display');
 const submitBandsBtn = document.getElementById('submit-bands-btn');
-const bandSelect0 = document.getElementById('band-select-0');
-const bandSelect1 = document.getElementById('band-select-1');
-const bandSelect2 = document.getElementById('band-select-2');
+const colorPalette = document.getElementById('color-palette');
+const bandDropZones = document.querySelectorAll('.band-drop-zone:not(.band-fixed-zone)');
 
 // UX Fix: New elements
 const abortBtn = document.getElementById('abort-btn');
@@ -43,6 +42,9 @@ const bandsError = document.getElementById('bands-error');
 // State tracking for dynamic button text
 let totalQuestionsCount = 10;
 let currentQuestionCount = 0;
+
+// Drag & Drop state
+let draggedColor = null;
 
 export function init(state, onStart, onSubmit, onReset, onNext, onSubmitBands) {
     // Mode Selection
@@ -216,20 +218,102 @@ export function showColorPicker(targetValue) {
     resetColorPicker();
 }
 
-// Reset color picker selections
+// Reset color picker selections (clear drop zones)
 function resetColorPicker() {
-    if (bandSelect0) bandSelect0.value = '';
-    if (bandSelect1) bandSelect1.value = '';
-    if (bandSelect2) bandSelect2.value = '';
+    bandDropZones.forEach(zone => {
+        zone.dataset.color = '';
+        zone.style.background = '';
+        zone.classList.remove('has-color');
+    });
 }
 
-// Get selected bands as array of color names
+// Get selected bands as array of color names from drop zones
 function getSelectedBands() {
-    return [
-        bandSelect0 ? bandSelect0.value : '',
-        bandSelect1 ? bandSelect1.value : '',
-        bandSelect2 ? bandSelect2.value : ''
-    ];
+    const bands = [];
+    bandDropZones.forEach(zone => {
+        bands.push(zone.dataset.color || '');
+    });
+    return bands;
+}
+
+// Initialize drag and drop functionality
+export function initDragAndDrop(onColorChange) {
+    const colorChips = document.querySelectorAll('.color-chip');
+
+    const colorMap = {
+        'black': '#000000',
+        'brown': '#8B4513',
+        'red': '#FF0000',
+        'orange': '#FFA500',
+        'yellow': '#FFFF00',
+        'green': '#008000',
+        'blue': '#0000FF',
+        'violet': '#8A2BE2',
+        'gray': '#808080',
+        'white': '#FFFFFF'
+    };
+
+    // Drag start
+    colorChips.forEach(chip => {
+        chip.addEventListener('dragstart', (e) => {
+            draggedColor = e.target.dataset.color;
+            e.target.classList.add('dragging');
+        });
+
+        chip.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging');
+            draggedColor = null;
+        });
+    });
+
+    // Drop zones
+    bandDropZones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+
+            if (draggedColor) {
+                zone.dataset.color = draggedColor;
+                zone.style.background = colorMap[draggedColor] || '';
+                zone.classList.add('has-color');
+
+                // Add border for visibility on light colors
+                if (['yellow', 'white'].includes(draggedColor)) {
+                    zone.style.border = '2px solid #999';
+                } else {
+                    zone.style.border = '2px solid transparent';
+                }
+
+                // Notify preview callback
+                if (onColorChange) {
+                    onColorChange(getSelectedBands());
+                }
+            }
+        });
+
+        // Click to clear
+        zone.addEventListener('click', () => {
+            if (zone.classList.contains('has-color')) {
+                zone.dataset.color = '';
+                zone.style.background = '';
+                zone.style.border = '';
+                zone.classList.remove('has-color');
+
+                if (onColorChange) {
+                    onColorChange(getSelectedBands());
+                }
+            }
+        });
+    });
 }
 
 export function resetInput() {
@@ -319,24 +403,8 @@ function updateThemeIcon(theme) {
 }
 
 // ============================================
-// Real-time Resistor Preview (Build Mode)
+// Real-time Resistor Preview (for drag and drop it's handled in initDragAndDrop)
 // ============================================
-let previewCallback = null;
-
-export function setPreviewCallback(callback) {
-    previewCallback = callback;
-
-    // Add change listeners to band selects
-    [bandSelect0, bandSelect1, bandSelect2].forEach(select => {
-        if (select) {
-            select.addEventListener('change', () => {
-                if (previewCallback) {
-                    previewCallback(getSelectedBands());
-                }
-            });
-        }
-    });
-}
 
 export function getSelectedBandsExport() {
     return getSelectedBands();
