@@ -85,157 +85,191 @@ export function drawCircuit(canvas, problem) {
     ctx.fillStyle = '#000000';
     ctx.font = '28px Inter, sans-serif';
     ctx.textAlign = 'center';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
     const cx = w / 2;
     const cy = h / 2;
 
     if (problem.type === 'series') {
-        const r1 = problem.resistors[0];
-        const r2 = problem.resistors[1];
-
-        // Simple Series: Line -> Resistor -> Line -> Resistor -> Line
-        const y = cy;
-        const totalW = 400;
-        const startX = cx - totalW / 2;
-
-        // Draw wires and resistors
-        ctx.beginPath();
-        ctx.moveTo(startX, y);
-
-        // R1
-        drawZigZagResistor(ctx, startX + 50, y, 60);
-        ctx.fillText(`${r1}Ω`, startX + 80, y - 40);
-
-        // Wire between
-        ctx.moveTo(startX + 110, y);
-        ctx.lineTo(startX + 290, y);
-
-        // R2
-        drawZigZagResistor(ctx, startX + 290, y, 60);
-        ctx.fillText(`${r2}Ω`, startX + 320, y - 40);
-
-        // End wire
-        ctx.moveTo(startX + 350, y);
-        ctx.lineTo(startX + 400, y);
-
-        ctx.stroke();
-
+        drawSeriesCircuit(ctx, cx, cy, problem.resistors);
     } else if (problem.type === 'parallel') {
-        const r1 = problem.resistors[0];
-        const r2 = problem.resistors[1];
-
-        // Parallel Box
-        const leftX = cx - 100;
-        const rightX = cx + 100;
-        const topY = cy - 60;
-        const bottomY = cy + 60;
-
-        ctx.beginPath();
-        // Main Input/Output wires
-        ctx.moveTo(cx - 180, cy);
-        ctx.lineTo(leftX, cy);
-
-        // Split vertical
-        ctx.moveTo(leftX, topY);
-        ctx.lineTo(leftX, bottomY);
-
-        // Top Branch
-        ctx.moveTo(leftX, topY);
-        // Resistor
-        drawZigZagResistor(ctx, leftX + 40, topY, 120);
-        ctx.fillText(`${r1}Ω`, cx, topY - 30);
-        ctx.moveTo(rightX - 40, topY); // Resume from resistor end
-        ctx.lineTo(rightX, topY);
-
-        // Bottom Branch
-        ctx.moveTo(leftX, bottomY);
-        // Resistor
-        drawZigZagResistor(ctx, leftX + 40, bottomY, 120);
-        ctx.fillText(`${r2}Ω`, cx, bottomY - 30);
-        ctx.moveTo(rightX - 40, bottomY);
-        ctx.lineTo(rightX, bottomY);
-
-        // Join vertical
-        ctx.moveTo(rightX, topY);
-        ctx.lineTo(rightX, bottomY);
-
-        // Output wire
-        ctx.moveTo(rightX, cy);
-        ctx.lineTo(cx + 180, cy);
-
-        ctx.stroke();
-
+        drawParallelCircuit(ctx, cx, cy, problem.resistors);
     } else if (problem.type === 'mixed-s-p') {
-        // R1 + (R2 || R3)
-        const r1 = problem.resistors[0];
-        const r2 = problem.resistors[1];
-        const r3 = problem.resistors[2];
-
-        const startX = 50;
-        const y = cy;
-
-        ctx.beginPath();
-        ctx.moveTo(startX, y);
-
-        // R1 (Series part)
-        drawZigZagResistor(ctx, startX + 50, y, 60);
-        ctx.fillText(`${r1}Ω`, startX + 80, y - 40);
-
-        // Connect to Parallel Block
-        const junctionX = startX + 150;
-        ctx.moveTo(startX + 110, y);
-        ctx.lineTo(junctionX, y);
-
-        // Parallel Block
-        const blockW = 200;
-        const endX = junctionX + blockW;
-        const topY = y - 50;
-        const bottomY = y + 50;
-
-        // Vertical Split
-        ctx.moveTo(junctionX, topY);
-        ctx.lineTo(junctionX, bottomY);
-
-        // Top R2
-        ctx.moveTo(junctionX, topY);
-        drawZigZagResistor(ctx, junctionX + 40, topY, 120);
-        ctx.fillText(`${r2}Ω`, junctionX + 100, topY - 30);
-
-        // Bottom R3
-        ctx.moveTo(junctionX, bottomY);
-        drawZigZagResistor(ctx, junctionX + 40, bottomY, 120);
-        ctx.fillText(`${r3}Ω`, junctionX + 100, bottomY - 30);
-
-        // Vertical Join
-        ctx.moveTo(endX, topY);
-        ctx.lineTo(endX, bottomY);
-
-        // Out wire
-        ctx.moveTo(endX, y);
-        ctx.lineTo(endX + 50, y);
-
-        ctx.stroke();
+        drawMixedCircuit(ctx, cx, cy, problem.resistors);
     }
 }
 
-function drawZigZagResistor(ctx, x, y, length) {
-    // Draws a zig-zag symbol starting at x,y with total length
-    // Standard resistor symbol has ~6 zigs
-    const seg = length / 6;
-    const h = 15; // height of zig
-
-    ctx.moveTo(x, y);
-    /* 
-       We need to draw the zig zag carefully. 
-       Usually it goes up-down-up-down...
-       Actually: move slightly in, then up, down, up, down... then slightly out.
-       Let's simplify: simple zig zag 
-    */
-    ctx.lineTo(x + seg * 0.5, y - h);
-    ctx.lineTo(x + seg * 1.5, y + h);
-    ctx.lineTo(x + seg * 2.5, y - h);
-    ctx.lineTo(x + seg * 3.5, y + h);
-    ctx.lineTo(x + seg * 4.5, y - h);
-    ctx.lineTo(x + seg * 5.5, y + h); // This might be too many
-    ctx.lineTo(x + length, y);
+// Helper: Draw a single line
+function drawLine(ctx, x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
 }
+
+// Helper: Draw a zigzag resistor symbol and return end x position
+function drawResistorSymbol(ctx, startX, y, length) {
+    const peaks = 4; // Number of zigzag peaks
+    const segmentWidth = length / (peaks * 2);
+    const amplitude = 15;
+
+    ctx.beginPath();
+    ctx.moveTo(startX, y);
+
+    for (let i = 0; i < peaks * 2; i++) {
+        const xPos = startX + segmentWidth * (i + 1);
+        const yPos = y + (i % 2 === 0 ? -amplitude : amplitude);
+        ctx.lineTo(xPos, yPos);
+    }
+
+    ctx.lineTo(startX + length, y);
+    ctx.stroke();
+
+    return startX + length;
+}
+
+// Series Circuit: ──[R1]──[R2]──
+function drawSeriesCircuit(ctx, cx, cy, resistors) {
+    const r1 = resistors[0];
+    const r2 = resistors[1];
+    const y = cy;
+
+    const resistorLen = 80;
+    const wireLen = 50;
+    const gapBetween = 60;
+
+    // Total width calculation
+    const totalWidth = wireLen + resistorLen + gapBetween + resistorLen + wireLen;
+    const startX = cx - totalWidth / 2;
+
+    let x = startX;
+
+    // Left wire
+    drawLine(ctx, x, y, x + wireLen, y);
+    x += wireLen;
+
+    // R1
+    const r1End = drawResistorSymbol(ctx, x, y, resistorLen);
+    ctx.fillText(`${r1}Ω`, x + resistorLen / 2, y - 35);
+    x = r1End;
+
+    // Middle wire
+    drawLine(ctx, x, y, x + gapBetween, y);
+    x += gapBetween;
+
+    // R2
+    const r2End = drawResistorSymbol(ctx, x, y, resistorLen);
+    ctx.fillText(`${r2}Ω`, x + resistorLen / 2, y - 35);
+    x = r2End;
+
+    // Right wire
+    drawLine(ctx, x, y, x + wireLen, y);
+}
+
+// Parallel Circuit
+//       ┌──[R1]──┐
+// ──────┤        ├──────
+//       └──[R2]──┘
+function drawParallelCircuit(ctx, cx, cy, resistors) {
+    const r1 = resistors[0];
+    const r2 = resistors[1];
+
+    const branchSpacing = 60;  // Vertical distance from center to each branch
+    const resistorLen = 100;
+    const horizontalPadding = 30; // Wire from junction to resistor
+    const inputWireLen = 60;
+
+    const topY = cy - branchSpacing;
+    const bottomY = cy + branchSpacing;
+
+    // Junction points
+    const leftJunctionX = cx - resistorLen / 2 - horizontalPadding;
+    const rightJunctionX = cx + resistorLen / 2 + horizontalPadding;
+
+    // Input wire (left)
+    drawLine(ctx, leftJunctionX - inputWireLen, cy, leftJunctionX, cy);
+
+    // Left vertical junction (top to bottom)
+    drawLine(ctx, leftJunctionX, topY, leftJunctionX, bottomY);
+
+    // Top branch: left junction -> resistor -> right junction
+    drawLine(ctx, leftJunctionX, topY, leftJunctionX + horizontalPadding, topY);
+    const r1StartX = leftJunctionX + horizontalPadding;
+    drawResistorSymbol(ctx, r1StartX, topY, resistorLen);
+    ctx.fillText(`${r1}Ω`, cx, topY - 30);
+    drawLine(ctx, r1StartX + resistorLen, topY, rightJunctionX, topY);
+
+    // Bottom branch: left junction -> resistor -> right junction
+    drawLine(ctx, leftJunctionX, bottomY, leftJunctionX + horizontalPadding, bottomY);
+    const r2StartX = leftJunctionX + horizontalPadding;
+    drawResistorSymbol(ctx, r2StartX, bottomY, resistorLen);
+    ctx.fillText(`${r2}Ω`, cx, bottomY + 45);
+    drawLine(ctx, r2StartX + resistorLen, bottomY, rightJunctionX, bottomY);
+
+    // Right vertical junction (top to bottom)
+    drawLine(ctx, rightJunctionX, topY, rightJunctionX, bottomY);
+
+    // Output wire (right)
+    drawLine(ctx, rightJunctionX, cy, rightJunctionX + inputWireLen, cy);
+}
+
+// Mixed Circuit: R1 in series with (R2 || R3)
+//                ┌──[R2]──┐
+// ──[R1]─────────┤        ├──────
+//                └──[R3]──┘
+function drawMixedCircuit(ctx, cx, cy, resistors) {
+    const r1 = resistors[0];
+    const r2 = resistors[1];
+    const r3 = resistors[2];
+
+    const branchSpacing = 50;
+    const seriesResistorLen = 70;
+    const parallelResistorLen = 90;
+    const wireLen = 40;
+    const horizontalPadding = 25;
+
+    const topY = cy - branchSpacing;
+    const bottomY = cy + branchSpacing;
+
+    // Start from left
+    let x = 40;
+
+    // Input wire
+    drawLine(ctx, x, cy, x + wireLen, cy);
+    x += wireLen;
+
+    // R1 (series)
+    drawResistorSymbol(ctx, x, cy, seriesResistorLen);
+    ctx.fillText(`${r1}Ω`, x + seriesResistorLen / 2, cy - 35);
+    x += seriesResistorLen;
+
+    // Wire to parallel junction
+    const junctionLeftX = x + wireLen;
+    drawLine(ctx, x, cy, junctionLeftX, cy);
+
+    // Left vertical line of parallel block
+    drawLine(ctx, junctionLeftX, topY, junctionLeftX, bottomY);
+
+    // Top branch (R2)
+    const pStartX = junctionLeftX + horizontalPadding;
+    drawLine(ctx, junctionLeftX, topY, pStartX, topY);
+    drawResistorSymbol(ctx, pStartX, topY, parallelResistorLen);
+    ctx.fillText(`${r2}Ω`, pStartX + parallelResistorLen / 2, topY - 30);
+
+    const junctionRightX = pStartX + parallelResistorLen + horizontalPadding;
+    drawLine(ctx, pStartX + parallelResistorLen, topY, junctionRightX, topY);
+
+    // Bottom branch (R3)
+    drawLine(ctx, junctionLeftX, bottomY, pStartX, bottomY);
+    drawResistorSymbol(ctx, pStartX, bottomY, parallelResistorLen);
+    ctx.fillText(`${r3}Ω`, pStartX + parallelResistorLen / 2, bottomY + 45);
+    drawLine(ctx, pStartX + parallelResistorLen, bottomY, junctionRightX, bottomY);
+
+    // Right vertical line of parallel block
+    drawLine(ctx, junctionRightX, topY, junctionRightX, bottomY);
+
+    // Output wire
+    drawLine(ctx, junctionRightX, cy, junctionRightX + wireLen, cy);
+}
+
