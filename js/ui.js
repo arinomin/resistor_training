@@ -118,7 +118,7 @@ export function resetInput() {
     answerInput.disabled = false;
     answerInput.focus();
     submitBtn.classList.remove('hidden');
-    nextBtn.classList.add('hidden');
+    // nextBtn is inside feedback-area, so it hides when feedback hides
 }
 
 export function hideFeedback() {
@@ -136,9 +136,14 @@ export function showFeedback(isCorrect, explanation) {
 
     // Manage buttons
     submitBtn.classList.add('hidden');
-    nextBtn.classList.remove('hidden');
+    // nextBtn is now visible because parent feedback-area is visible
     answerInput.disabled = true;
-    nextBtn.focus();
+
+    // Auto-scroll to feedback
+    setTimeout(() => {
+        feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        nextBtn.focus();
+    }, 100);
 }
 
 export function showResult(score, total) {
