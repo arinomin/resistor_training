@@ -124,6 +124,9 @@ export function resetInput() {
 export function hideFeedback() {
     feedbackArea.classList.add('hidden');
     feedbackArea.classList.remove('correct', 'incorrect');
+    // Clear content to be safe
+    resultMessageEl.textContent = '';
+    explanationEl.textContent = '';
 }
 
 export function showFeedback(isCorrect, explanation) {
@@ -136,14 +139,17 @@ export function showFeedback(isCorrect, explanation) {
 
     // Manage buttons
     submitBtn.classList.add('hidden');
-    // nextBtn is now visible because parent feedback-area is visible
+    // separate nextBtn logic is not needed if it's inside feedbackArea which toggles visibility
     answerInput.disabled = true;
 
     // Auto-scroll to feedback
-    setTimeout(() => {
-        feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        nextBtn.focus();
-    }, 100);
+    // Use requestAnimationFrame to ensure DOM is updated before scrolling
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            nextBtn.focus();
+        }, 50);
+    });
 }
 
 export function showResult(score, total) {

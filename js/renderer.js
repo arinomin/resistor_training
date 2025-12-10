@@ -83,7 +83,7 @@ export function drawCircuit(canvas, problem) {
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 3;
     ctx.fillStyle = '#000000';
-    ctx.font = '24px Inter, sans-serif';
+    ctx.font = '28px Inter, sans-serif';
     ctx.textAlign = 'center';
 
     const cx = w / 2;
