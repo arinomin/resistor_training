@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抵抗値トレーニング</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Start Screen -->
+        <section id="start-screen" class="screen active">
+            <header>
+                <h1>Resistor Training</h1>
+                <p>抵抗器カラーコード & 合成抵抗 計算トレーニング</p>
+            </header>
+            
+            <div class="menu-container">
+                <div class="setting-group">
+                    <h2>トレーニング内容</h2>
+                    <div class="mode-select">
+                        <button class="mode-btn selected" data-mode="colorcode">
+                            <span class="icon">🎨</span>
+                            <span class="label">カラーコード</span>
+                        </button>
+                        <button class="mode-btn" data-mode="series-parallel">
+                            <span class="icon">🔋</span>
+                            <span class="label">合成抵抗 (基礎)</span>
+                        </button>
+                        <button class="mode-btn" data-mode="mixed">
+                            <span class="icon">⚡</span>
+                            <span class="label">合成抵抗 (応用)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h2>問題数</h2>
+                    <div class="count-select">
+                        <button class="count-btn" data-count="5">5問</button>
+                        <button class="count-btn selected" data-count="10">10問</button>
+                        <button class="count-btn" data-count="20">20問</button>
+                    </div>
+                </div>
+
+                <div class="action-area">
+                    <button id="start-btn" class="primary-btn">スタート</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Screen -->
+        <section id="quiz-screen" class="screen hidden">
+            <header class="quiz-header">
+                <div class="progress">
+                    <span id="current-question">1</span> / <span id="total-questions">10</span>
+                </div>
+                <div class="score-preview">
+                    正解数: <span id="current-score">0</span>
+                </div>
+            </header>
+            
+            <div class="problem-area">
+                <canvas id="problem-canvas" width="600" height="300"></canvas>
+            </div>
+
+            <div class="answer-area">
+                <div class="input-group">
+                    <input type="number" id="answer-input" placeholder="値を入力" step="any">
+                    <span class="unit">Ω</span>
+                </div>
+                <button id="submit-btn" class="primary-btn">回答する</button>
+                <button id="next-btn" class="secondary-btn hidden">次の問題へ</button>
+            </div>
+
+            <div id="feedback-area" class="hidden">
+                <div class="result-message"></div>
+                <div class="explanation"></div>
+            </div>
+        </section>
+
+        <!-- Result Screen -->
+        <section id="result-screen" class="screen hidden">
+            <header>
+                <h1>結果発表</h1>
+            </header>
+            <div class="result-card">
+                <div class="score-circle">
+                    <span id="final-percentage">80</span><span class="percent">%</span>
+                    <div class="score-detail"><span id="final-correct">8</span> / <span id="final-total">10</span> 問正解</div>
+                </div>
+            </div>
+            <div class="action-area">
+                <button id="retry-btn" class="primary-btn">同じ設定でリトライ</button>
+                <button id="home-btn" class="secondary-btn">トップへ戻る</button>
+            </div>
+        </section>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
