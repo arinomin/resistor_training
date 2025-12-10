@@ -20,49 +20,46 @@
     <div id="app">
         <!-- Start Screen -->
         <section id="start-screen" class="screen active">
-            <header>
+            <header class="start-header">
+                <div class="logo-icon">⚡</div>
                 <h1>Resistor Training</h1>
-                <p>抵抗器カラーコード & 合成抵抗 計算トレーニング</p>
+                <p class="tagline">抵抗器カラーコード & 合成抵抗 計算トレーニング</p>
             </header>
 
             <div class="menu-container">
-                <div class="setting-group">
-                    <h2>トレーニング内容</h2>
-                    <div class="mode-select">
-                        <button class="mode-btn selected" data-mode="colorcode">
-                            <span class="icon">🎨</span>
-                            <span class="label">カラーコード</span>
-                        </button>
-                        <button class="mode-btn" data-mode="build-resistor">
-                            <span class="icon">🔧</span>
-                            <span class="label">抵抗を作る</span>
-                        </button>
-                        <button class="mode-btn" data-mode="series-parallel">
-                            <span class="icon">🔋</span>
-                            <span class="label">合成抵抗 (基礎)</span>
-                        </button>
-                        <button class="mode-btn" data-mode="mixed">
-                            <span class="icon">⚡</span>
-                            <span class="label">合成抵抗 (応用)</span>
-                        </button>
-                    </div>
+                <h2 class="section-label">トレーニング内容</h2>
+                <div class="mode-select">
+                    <button class="mode-btn selected" data-mode="colorcode">
+                        <span class="icon">🎨</span>
+                        <span class="label">カラーコード</span>
+                    </button>
+                    <button class="mode-btn" data-mode="build-resistor">
+                        <span class="icon">🔧</span>
+                        <span class="label">抵抗を作る</span>
+                    </button>
+                    <button class="mode-btn" data-mode="series-parallel">
+                        <span class="icon">🔋</span>
+                        <span class="label">合成抵抗 (基礎)</span>
+                    </button>
+                    <button class="mode-btn" data-mode="mixed">
+                        <span class="icon">⚡</span>
+                        <span class="label">合成抵抗 (応用)</span>
+                    </button>
                 </div>
 
-                <div class="setting-group">
-                    <h2>問題数</h2>
-                    <div class="count-select">
-                        <button class="count-btn" data-count="5">5問</button>
-                        <button class="count-btn selected" data-count="10">10問</button>
-                        <button class="count-btn" data-count="20">20問</button>
-                        <button class="count-btn" data-count="30">30問</button>
-                        <button class="count-btn" data-count="50">50問</button>
-                        <button class="count-btn" data-count="100">100問</button>
-                    </div>
+                <h2 class="section-label">問題数</h2>
+                <div class="count-select">
+                    <button class="count-btn" data-count="5">5</button>
+                    <button class="count-btn selected" data-count="10">10</button>
+                    <button class="count-btn" data-count="20">20</button>
+                    <button class="count-btn" data-count="30">30</button>
+                    <button class="count-btn" data-count="50">50</button>
+                    <button class="count-btn" data-count="100">100</button>
                 </div>
 
                 <div class="action-area">
                     <button id="start-btn" class="primary-btn">スタート</button>
-                    <button id="guide-btn" class="secondary-btn" style="margin-top: 1rem;">抵抗の読み方・計算方法</button>
+                    <button id="guide-btn" class="link-btn">📖 抵抗の読み方・計算方法</button>
                 </div>
             </div>
         </section>
