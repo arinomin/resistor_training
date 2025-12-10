@@ -84,6 +84,22 @@ export function init(state, onStart, onSubmit, onReset, onNext) {
     homeBtn.addEventListener('click', () => {
         onReset();
     });
+
+    // Guide Buttons
+    const guideBtn = document.getElementById('guide-btn');
+    const guideBackBtn = document.getElementById('guide-back-btn');
+
+    if (guideBtn) {
+        guideBtn.addEventListener('click', () => {
+            showScreen('guide-screen');
+        });
+    }
+
+    if (guideBackBtn) {
+        guideBackBtn.addEventListener('click', () => {
+            showScreen('start-screen');
+        });
+    }
 }
 
 export function showScreen(screenId) {

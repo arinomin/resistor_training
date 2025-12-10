@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,11 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div id="app">
         <!-- Start Screen -->
@@ -17,7 +21,7 @@
                 <h1>Resistor Training</h1>
                 <p>抵抗器カラーコード & 合成抵抗 計算トレーニング</p>
             </header>
-            
+
             <div class="menu-container">
                 <div class="setting-group">
                     <h2>トレーニング内容</h2>
@@ -48,6 +52,7 @@
 
                 <div class="action-area">
                     <button id="start-btn" class="primary-btn">スタート</button>
+                    <button id="guide-btn" class="secondary-btn" style="margin-top: 1rem;">抵抗の読み方・計算方法</button>
                 </div>
             </div>
         </section>
@@ -62,7 +67,7 @@
                     正解数: <span id="current-score">0</span>
                 </div>
             </header>
-            
+
             <div class="problem-area">
                 <canvas id="problem-canvas" width="600" height="300"></canvas>
             </div>
@@ -90,7 +95,8 @@
             <div class="result-card">
                 <div class="score-circle">
                     <span id="final-percentage">80</span><span class="percent">%</span>
-                    <div class="score-detail"><span id="final-correct">8</span> / <span id="final-total">10</span> 問正解</div>
+                    <div class="score-detail"><span id="final-correct">8</span> / <span id="final-total">10</span> 問正解
+                    </div>
                 </div>
             </div>
             <div class="action-area">
@@ -98,7 +104,120 @@
                 <button id="home-btn" class="secondary-btn">トップへ戻る</button>
             </div>
         </section>
+
+        <!-- Guide Screen -->
+        <section id="guide-screen" class="screen hidden">
+            <header>
+                <h1>抵抗の基礎知識</h1>
+            </header>
+
+            <div class="guide-content">
+                <article>
+                    <h2>1. カラーコードの読み方</h2>
+                    <p>4本帯の抵抗器は、左から「第1数字」「第2数字」「倍率」を表し、一番右離れているのが「誤差」です。</p>
+                    <div class="color-table-wrapper">
+                        <table class="color-table">
+                            <thead>
+                                <tr>
+                                    <th>色</th>
+                                    <th>覚え方</th>
+                                    <th>値</th>
+                                    <th>倍率</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-left: 5px solid black;">
+                                    <td>黒 (Black)</td>
+                                    <td>黒い礼服</td>
+                                    <td>0</td>
+                                    <td>x1</td>
+                                </tr>
+                                <tr style="border-left: 5px solid brown;">
+                                    <td>茶 (Brown)</td>
+                                    <td>茶を一杯</td>
+                                    <td>1</td>
+                                    <td>x10</td>
+                                </tr>
+                                <tr style="border-left: 5px solid red;">
+                                    <td>赤 (Red)</td>
+                                    <td>赤いニンジン</td>
+                                    <td>2</td>
+                                    <td>x100</td>
+                                </tr>
+                                <tr style="border-left: 5px solid orange;">
+                                    <td>橙 (Orange)</td>
+                                    <td>第三の男</td>
+                                    <td>3</td>
+                                    <td>x1k</td>
+                                </tr>
+                                <tr style="border-left: 5px solid yellow;">
+                                    <td>黄 (Yellow)</td>
+                                    <td>黄色いシミ</td>
+                                    <td>4</td>
+                                    <td>x10k</td>
+                                </tr>
+                                <tr style="border-left: 5px solid green;">
+                                    <td>緑 (Green)</td>
+                                    <td>緑子は五歳</td>
+                                    <td>5</td>
+                                    <td>x100k</td>
+                                </tr>
+                                <tr style="border-left: 5px solid blue;">
+                                    <td>青 (Blue)</td>
+                                    <td>青虫むろく</td>
+                                    <td>6</td>
+                                    <td>x1M</td>
+                                </tr>
+                                <tr style="border-left: 5px solid violet;">
+                                    <td>紫 (Violet)</td>
+                                    <td>紫式部</td>
+                                    <td>7</td>
+                                    <td>x10M</td>
+                                </tr>
+                                <tr style="border-left: 5px solid gray;">
+                                    <td>灰 (Gray)</td>
+                                    <td>ハイヤー</td>
+                                    <td>8</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr style="border-left: 5px solid white;">
+                                    <td>白 (White)</td>
+                                    <td>ホワイトクリスマス</td>
+                                    <td>9</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article>
+                    <h2>2. 合成抵抗の計算</h2>
+
+                    <div class="formula-box">
+                        <h3>🔋 直列回路 (Series)</h3>
+                        <p>単純に足し合わせます。</p>
+                        <div class="formula">R = R₁ + R₂</div>
+                    </div>
+
+                    <div class="formula-box">
+                        <h3>⚡ 並列回路 (Parallel)</h3>
+                        <p>2つの場合は「和分の積」が簡単です。</p>
+                        <div class="formula">
+                            R = <div class="frac"><span>R₁ × R₂</span><span class="symbol">/</span><span>R₁ + R₂</span>
+                            </div>
+                        </div>
+                        <p class="note">※3つ以上の場合は逆数の和の逆数を使います: 1/R = 1/R₁ + 1/R₂ + ...</p>
+                    </div>
+                </article>
+            </div>
+
+            <div class="action-area" style="margin-top: 2rem;">
+                <button id="guide-back-btn" class="primary-btn">トップに戻る</button>
+            </div>
+        </section>
     </div>
     <script type="module" src="script.js"></script>
 </body>
+
 </html>

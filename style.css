@@ -51,8 +51,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 header {
@@ -125,13 +132,15 @@ button {
 }
 
 /* Start Screen specific */
-.mode-select, .count-select {
+.mode-select,
+.count-select {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-.mode-btn, .count-btn {
+.mode-btn,
+.count-btn {
     flex: 1;
     background: white;
     border: 2px solid var(--border-color);
@@ -144,12 +153,14 @@ button {
     min-width: 120px;
 }
 
-.mode-btn:hover, .count-btn:hover {
+.mode-btn:hover,
+.count-btn:hover {
     border-color: var(--primary-color);
     background-color: #eff6ff;
 }
 
-.mode-btn.selected, .count-btn.selected {
+.mode-btn.selected,
+.count-btn.selected {
     border-color: var(--primary-color);
     background-color: #e0e7ff;
     color: var(--primary-color);
@@ -237,8 +248,13 @@ button {
     margin-bottom: 1rem;
 }
 
-.correct .result-message { color: var(--success-color); }
-.incorrect .result-message { color: var(--error-color); }
+.correct .result-message {
+    color: var(--success-color);
+}
+
+.incorrect .result-message {
+    color: var(--error-color);
+}
 
 .explanation {
     font-size: 1rem;
@@ -287,4 +303,87 @@ button {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* Guide Screen Specifics */
+.guide-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    text-align: left;
+}
+
+.color-table-wrapper {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.color-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.color-table th,
+.color-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.color-table th {
+    background-color: #f1f5f9;
+    font-weight: 700;
+}
+
+.formula-box {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.formula-box h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.formula {
+    font-family: 'Times New Roman', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 1rem 0;
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.frac {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    align-items: center;
+    margin: 0 0.5rem;
+}
+
+.frac>span {
+    padding: 0 0.5rem;
+}
+
+.frac>span.symbol {
+    display: none;
+    /* simple display logic */
+}
+
+/* Simulate fraction using border */
+.frac>span:first-child {
+    border-bottom: 2px solid currentColor;
+}
+
+.note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
 }
