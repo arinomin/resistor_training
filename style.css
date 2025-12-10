@@ -391,3 +391,71 @@ button {
     font-size: 0.9rem;
     color: var(--text-muted);
 }
+
+/* Color Picker for Build Resistor Mode */
+#color-picker-area {
+    text-align: center;
+}
+
+.picker-instruction {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+}
+
+.target-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.band-slots {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.band-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 100px;
+}
+
+.band-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.band-select {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    background: white;
+    cursor: pointer;
+    min-width: 110px;
+}
+
+.band-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.fixed-band {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    min-width: 110px;
+    text-align: center;
+}
+
+.gold-band {
+    background: linear-gradient(135deg, #FFD700, #DAA520);
+    color: #333;
+}

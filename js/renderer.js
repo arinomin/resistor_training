@@ -53,7 +53,7 @@ function getCssColor(name) {
         'yellow': '#FFFF00',
         'green': '#008000',
         'blue': '#0000FF',
-        'violet': '#EE82EE',
+        'violet': '#8A2BE2', // Changed from default EE82EE (pinkish) to BlueViolet
         'gray': '#808080',
         'white': '#FFFFFF',
         'gold': '#FFD700',

@@ -171,3 +171,61 @@ export class CircuitProblem {
         }
     }
 }
+
+// Export COLORS for use in UI color picker
+export { COLORS };
+
+// New: ColorBuildProblem - User selects bands for a given resistance value
+export class ColorBuildProblem {
+    constructor() {
+        this.generate();
+    }
+
+    generate() {
+        // Generate a valid resistance value and calculate correct bands
+        // Band 1: 1-9 (cannot be 0)
+        // Band 2: 0-9
+        // Band 3: Multiplier 0-4 (x1 to x10k for manageable values)
+
+        const b1 = Math.floor(Math.random() * 9) + 1; // 1-9
+        const b2 = Math.floor(Math.random() * 10);    // 0-9
+        const b3 = Math.floor(Math.random() * 5);     // 0-4
+
+        this.correctBands = [COLORS[b1], COLORS[b2], COLORS[b3], GOLD];
+        this.targetValue = (b1 * 10 + b2) * COLORS[b3].multiplier;
+    }
+
+    // Check if user-selected bands match correct bands
+    checkAnswer(selectedBands) {
+        // selectedBands is array of color names: ['brown', 'black', 'red']
+        if (!selectedBands || selectedBands.length < 3) return false;
+
+        return selectedBands[0] === this.correctBands[0].name &&
+            selectedBands[1] === this.correctBands[1].name &&
+            selectedBands[2] === this.correctBands[2].name;
+    }
+
+    getExplanation() {
+        const b1 = this.correctBands[0];
+        const b2 = this.correctBands[1];
+        const b3 = this.correctBands[2];
+
+        return `
+正解の色帯:
+第1帯: ${b1.label} (${b1.value})
+第2帯: ${b2.label} (${b2.value})
+第3帯: ${b3.label} (x${b3.multiplier})
+第4帯: 金 (誤差 ±5%)
+
+計算: (${b1.value} × 10 + ${b2.value}) × ${b3.multiplier} = ${this.targetValue} Ω
+        `.trim();
+    }
+
+    // Format target value for display (e.g., 4700 -> "4.7kΩ" or "4700Ω")
+    getDisplayValue() {
+        const v = this.targetValue;
+        if (v >= 1000000) return `${v / 1000000}MΩ`;
+        if (v >= 1000) return `${v / 1000}kΩ`;
+        return `${v}Ω`;
+    }
+}

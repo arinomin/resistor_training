@@ -26,7 +26,16 @@ const finalTotalEl = document.getElementById('final-total');
 const retryBtn = document.getElementById('retry-btn');
 const homeBtn = document.getElementById('home-btn');
 
-export function init(state, onStart, onSubmit, onReset, onNext) {
+// Color Picker Elements
+const numericAnswerArea = document.getElementById('numeric-answer-area');
+const colorPickerArea = document.getElementById('color-picker-area');
+const targetValueDisplay = document.getElementById('target-value-display');
+const submitBandsBtn = document.getElementById('submit-bands-btn');
+const bandSelect0 = document.getElementById('band-select-0');
+const bandSelect1 = document.getElementById('band-select-1');
+const bandSelect2 = document.getElementById('band-select-2');
+
+export function init(state, onStart, onSubmit, onReset, onNext, onSubmitBands) {
     // Mode Selection
     modeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -50,10 +59,10 @@ export function init(state, onStart, onSubmit, onReset, onNext) {
         onStart(mode, count);
     });
 
-    // Submit Answer
+    // Submit Answer (Numeric)
     submitBtn.addEventListener('click', () => {
         const val = parseFloat(answerInput.value);
-        if (isNaN(val)) return; // Validation?
+        if (isNaN(val)) return;
         onSubmit(val);
     });
 
@@ -68,6 +77,18 @@ export function init(state, onStart, onSubmit, onReset, onNext) {
             }
         }
     });
+
+    // Submit Bands (Color Picker)
+    if (submitBandsBtn) {
+        submitBandsBtn.addEventListener('click', () => {
+            const bands = getSelectedBands();
+            if (bands.includes('')) {
+                alert('すべての色帯を選択してください');
+                return;
+            }
+            onSubmitBands(bands);
+        });
+    }
 
     // Next Button
     nextBtn.addEventListener('click', () => {
@@ -113,18 +134,51 @@ export function updateProgress(current, total, score) {
     currentScoreEl.textContent = score;
 }
 
+// Show numeric input area, hide color picker
+export function showNumericInput() {
+    if (numericAnswerArea) numericAnswerArea.classList.remove('hidden');
+    if (colorPickerArea) colorPickerArea.classList.add('hidden');
+}
+
+// Show color picker, hide numeric input
+export function showColorPicker(targetValue) {
+    if (numericAnswerArea) numericAnswerArea.classList.add('hidden');
+    if (colorPickerArea) colorPickerArea.classList.remove('hidden');
+    if (targetValueDisplay) targetValueDisplay.textContent = targetValue;
+    resetColorPicker();
+}
+
+// Reset color picker selections
+function resetColorPicker() {
+    if (bandSelect0) bandSelect0.value = '';
+    if (bandSelect1) bandSelect1.value = '';
+    if (bandSelect2) bandSelect2.value = '';
+}
+
+// Get selected bands as array of color names
+function getSelectedBands() {
+    return [
+        bandSelect0 ? bandSelect0.value : '',
+        bandSelect1 ? bandSelect1.value : '',
+        bandSelect2 ? bandSelect2.value : ''
+    ];
+}
+
 export function resetInput() {
     answerInput.value = '';
     answerInput.disabled = false;
-    answerInput.focus();
     submitBtn.classList.remove('hidden');
-    // nextBtn is inside feedback-area, so it hides when feedback hides
+    if (submitBandsBtn) submitBandsBtn.classList.remove('hidden');
+    resetColorPicker();
+    // Focus appropriate element based on mode
+    if (numericAnswerArea && !numericAnswerArea.classList.contains('hidden')) {
+        answerInput.focus();
+    }
 }
 
 export function hideFeedback() {
     feedbackArea.classList.add('hidden');
     feedbackArea.classList.remove('correct', 'incorrect');
-    // Clear content to be safe
     resultMessageEl.textContent = '';
     explanationEl.textContent = '';
 }
@@ -137,13 +191,12 @@ export function showFeedback(isCorrect, explanation) {
     resultMessageEl.textContent = isCorrect ? '正解！' : '不正解...';
     explanationEl.textContent = explanation;
 
-    // Manage buttons
+    // Hide submit buttons
     submitBtn.classList.add('hidden');
-    // separate nextBtn logic is not needed if it's inside feedbackArea which toggles visibility
+    if (submitBandsBtn) submitBandsBtn.classList.add('hidden');
     answerInput.disabled = true;
 
     // Auto-scroll to feedback
-    // Use requestAnimationFrame to ensure DOM is updated before scrolling
     requestAnimationFrame(() => {
         setTimeout(() => {
             feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -159,3 +212,4 @@ export function showResult(score, total) {
     finalCorrectEl.textContent = score;
     finalTotalEl.textContent = total;
 }
+

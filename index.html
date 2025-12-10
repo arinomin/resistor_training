@@ -30,6 +30,10 @@
                             <span class="icon">🎨</span>
                             <span class="label">カラーコード</span>
                         </button>
+                        <button class="mode-btn" data-mode="build-resistor">
+                            <span class="icon">🔧</span>
+                            <span class="label">抵抗を作る</span>
+                        </button>
                         <button class="mode-btn" data-mode="series-parallel">
                             <span class="icon">🔋</span>
                             <span class="label">合成抵抗 (基礎)</span>
@@ -75,12 +79,69 @@
                 <canvas id="problem-canvas" width="600" height="300"></canvas>
             </div>
 
-            <div class="answer-area">
+            <div class="answer-area" id="numeric-answer-area">
                 <div class="input-group">
                     <input type="number" id="answer-input" placeholder="値を入力" step="any">
                     <span class="unit">Ω</span>
                 </div>
                 <button id="submit-btn" class="primary-btn">回答する</button>
+            </div>
+
+            <!-- Color Picker for Build Resistor Mode -->
+            <div id="color-picker-area" class="hidden">
+                <p class="picker-instruction">この抵抗を作ってください:</p>
+                <div class="target-value" id="target-value-display">4700Ω</div>
+
+                <div class="band-slots">
+                    <div class="band-slot" data-band="0">
+                        <span class="band-label">第1帯</span>
+                        <select class="band-select" id="band-select-0">
+                            <option value="">選択</option>
+                            <option value="brown">茶 (1)</option>
+                            <option value="red">赤 (2)</option>
+                            <option value="orange">橙 (3)</option>
+                            <option value="yellow">黄 (4)</option>
+                            <option value="green">緑 (5)</option>
+                            <option value="blue">青 (6)</option>
+                            <option value="violet">紫 (7)</option>
+                            <option value="gray">灰 (8)</option>
+                            <option value="white">白 (9)</option>
+                        </select>
+                    </div>
+                    <div class="band-slot" data-band="1">
+                        <span class="band-label">第2帯</span>
+                        <select class="band-select" id="band-select-1">
+                            <option value="">選択</option>
+                            <option value="black">黒 (0)</option>
+                            <option value="brown">茶 (1)</option>
+                            <option value="red">赤 (2)</option>
+                            <option value="orange">橙 (3)</option>
+                            <option value="yellow">黄 (4)</option>
+                            <option value="green">緑 (5)</option>
+                            <option value="blue">青 (6)</option>
+                            <option value="violet">紫 (7)</option>
+                            <option value="gray">灰 (8)</option>
+                            <option value="white">白 (9)</option>
+                        </select>
+                    </div>
+                    <div class="band-slot" data-band="2">
+                        <span class="band-label">第3帯 (倍率)</span>
+                        <select class="band-select" id="band-select-2">
+                            <option value="">選択</option>
+                            <option value="black">黒 (×1)</option>
+                            <option value="brown">茶 (×10)</option>
+                            <option value="red">赤 (×100)</option>
+                            <option value="orange">橙 (×1k)</option>
+                            <option value="yellow">黄 (×10k)</option>
+                        </select>
+                    </div>
+                    <div class="band-slot band-fixed">
+                        <span class="band-label">第4帯</span>
+                        <div class="fixed-band gold-band">金 (±5%)</div>
+                    </div>
+                </div>
+
+                <button id="submit-bands-btn" class="primary-btn">回答する</button>
             </div>
 
             <div id="feedback-area" class="hidden">
